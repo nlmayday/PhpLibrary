@@ -1,2 +1,3 @@
 # PhpLibrary
-PHP business direction for some of the classic good library
+version 0.1
+A nice, classic, business-oriented, loosely-coupled PHP class library.
