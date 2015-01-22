@@ -66,13 +66,25 @@ class Curl
         unset($this->curlHandle, $this->fileHandle);
     }
 
-    public function setQuickModeToCheckUrl()
+    public function setModeToTest()
+    {
+        $this->options[CURLOPT_HEADER] = false;
+        $this->options[CURLOPT_NOBODY] = true;
+    }
+	
+	public function setModeToHeader()
     {
         $this->options[CURLOPT_HEADER] = true;
         $this->options[CURLOPT_NOBODY] = true;
     }
+	
+	public function setModeToContent()
+    {
+        $this->options[CURLOPT_HEADER] = false;
+        $this->options[CURLOPT_NOBODY] = false;
+    }
 
-    public function setForAllData()
+    public function setModeToAll()
     {
         $this->options[CURLOPT_HEADER] = true;
         $this->options[CURLOPT_NOBODY] = false;
