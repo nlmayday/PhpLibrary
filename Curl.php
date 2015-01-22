@@ -2,17 +2,6 @@
 class Curl
 {
     protected $curlHandle, $fileHandle;
-    
-    // 是否返回抓取的错误报告
-    public $returnError = true;
-    
-    // 是否返回抓取的具体信息，默认全部返回
-    public $returnInfo = array(
-        'opt' => 0
-    );
-    
-    // 是否返回抓取内容
-    public $returnContent = true;
 
     public $userAgent = array(
         'Mozilla/5.0 (Windows NT 6.%u; rv:31.%u) Gecko/20100101 Firefox/%u0.%u',
@@ -162,21 +151,11 @@ class Curl
             curl_setopt($this->curlHandle, CURLOPT_FILE, $this->fileHandle);
         }
         
-        $tempContent = curl_exec($this->curlHandle);
-        
         $result = new stdClass();
-        
-        if (! empty($this->returnError)) {
-            $result->error = curl_error($this->curlHandle);
-        }
-        
-        if (! empty($this->returnInfo)) {
-            $result->info = ! empty($this->returnInfo['opt']) ? curl_getinfo($this->curlHandle, $this->returnInfo['opt']) : curl_getinfo($this->curlHandle);
-        }
-        
-        if (! empty($this->returnContent)) {
-            $result->content = &$tempContent;
-        }
+		
+        $result->content = curl_exec($this->curlHandle);
+		$result->info = (object)curl_getinfo($this->curlHandle);
+		$result->error = curl_error($this->curlHandle);
         
         return $result;
     }
@@ -204,17 +183,10 @@ class Curl
         } while ($process > 0);
         
         foreach ($curlHandles as $k => $handle) {
-            if (! empty($this->returnError)) {
-                $result[$k]->error = curl_error($handle);
-            }
-            
-            if (! empty($this->returnInfo)) {
-                $result[$k]->info = ! empty($this->returnInfo['opt']) ? curl_getinfo($handle, $this->returnInfo['opt']) : curl_getinfo($handle);
-            }
-            
-            if (! empty($this->returnContent)) {
-                $result[$k]->content = curl_multi_getcontent($handle);
-            }
+			
+            $result[$k]->content = curl_multi_getcontent($handle);
+			$result[$k]->info = (object)curl_getinfo($handle);
+			$result[$k]->error = curl_error($handle);
             
             curl_multi_remove_handle($multiCurlHandles, $handle);
             $isDownLoad && is_resource($fileHandles[$k]) ? fclose($fileHandles[$k]) : '';
