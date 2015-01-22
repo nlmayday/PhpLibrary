@@ -195,6 +195,7 @@ class Curl
         } while ($process > 0);
         
         foreach ($curlHandles as $k => $handle) {
+			$result[$k] = new stdClass();
 			
             $result[$k]->content = curl_multi_getcontent($handle);
 			$result[$k]->info = (object)curl_getinfo($handle);
