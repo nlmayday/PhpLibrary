@@ -78,9 +78,9 @@ class Tools
         return preg_match_all('/<img[^>]*src\s*=\s*([\'"]?)([^\'">]*)\1(?=\s|\/|>)/isu', $string, $matches) ? (array) $matches[2] : array();
     }
 
-    public static function convertCharset($data, $nowCharset, $newCharset = 'utf-8')
+    public static function convertCharset($string, $newCharset, $nowCharset = 'utf-8')
     {
-        return $nowCharset !== $newCharset ? iconv($nowCharset, $newCharset . "//IGNORE", $data) : $data;
+        return $nowCharset !== $newCharset ? mb_convert_encoding($string, $newCharset, $nowCharset) : $string;
     }
 
     public static function convertSzie($bytesNumber, $decimals = 2)
