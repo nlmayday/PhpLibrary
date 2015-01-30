@@ -1,31 +1,39 @@
 <?php
 class Image
 {
+	public static $type = array(1 => 'gif', 2 => 'jpeg', 3 => 'png');
+	
     public static function compress($src, $quality = 90)
     {
         list ($width, $height, $type) = @getimagesize($src);
-        if ($type !== 2) {
-            return is_numeric($type);
+        if (!is_numeric($type)) {
+            return false;
         }
-        if (($img = @imagecreatefromjpeg($src)) && imagecopyresampled($img, $img, 0, 0, 0, 0, $width, $height, $width, $height) && imagejpeg($img, $src, $quality)) {
+		
+		$imagecreatefromFunction = 'imagecreatefrom' . self::$type[$type];
+		$imageFunction = 'image' . self::$type[$type];
+		$quality = $type !== 2 && $quality > 9 ? 9 : $quality;
+		
+        if (($img = @$imagecreatefromFunction($src)) && imagecopyresampled($img, $img, 0, 0, 0, 0, $width, $height, $width, $height) && $imageFunction($img, $src, $quality)) {
             return imagedestroy($img);
         }
 		is_resource($img) && imagedestroy($img);
         return false;
     }
 
-    public static function watermarkByImage($fromPath, $watermarkPath, $toPath = '', $xAlign = 'left', $yAlign = 'bottom', $quality = 90)
+    public static function watermarkToJpg($fromPath, $watermarkPath, $toPath = '', $xAlign = 'left', $yAlign = 'bottom', $quality = 90)
     {
         $xOffset = $yOffset = $xPos = $yPos = 10; // 偏移10像素
+		
         if (!($img = @imagecreatefromjpeg($fromPath)) || !(list($waterWidth, $waterHeight, $waterType) = @getimagesize($watermarkPath))){
 			return false;
 		}
-           
-        $waterArray = array(1 => 'gif', 2 => 'jpeg', 3 => 'png');
 		
-        $createFunc = 'imagecreatefrom' . $waterArray[$waterType];
-        if (! $imgWater = @$createFunc($watermarkPath))
-            exit('The watermark image is not a real ' . $waterArray[$waterType] . ', please CONVERT the image.');
+        $imagecreatefromFunction = 'imagecreatefrom' . self::$type[$waterType];
+        if (!($imgWater = @$imagecreatefromFunction($watermarkPath))){
+			return false;
+		}
+		
         list ($imgWidth, $imgHeight) = @getimagesize($fromPath);
         if ($xAlign == 'middle') {
             $xPos = $imgWidth / 2 - $waterWidth / 2 + $xOffset;
