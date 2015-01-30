@@ -7,9 +7,7 @@ class Image
         if ($type !== 2) {
             return true;
         }
-        $img = imagecreatefromjpeg($src);
-        imagecopyresampled($img, $img, 0, 0, 0, 0, $width, $height, $width, $height);
-        if (imagejpeg($img, $src, $quality)) {
+        if (($img = imagecreatefromjpeg($src)) && imagecopyresampled($img, $img, 0, 0, 0, 0, $width, $height, $width, $height) && imagejpeg($img, $src, $quality)) {
             imagedestroy($img);
             return true;
         }
