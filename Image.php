@@ -5,7 +5,7 @@ class Image
     {
         list ($width, $height, $type) = getimagesize($src);
         if ($type !== 2) {
-            return $src;
+            return true;
         }
         $img = imagecreatefromjpeg($src);
         imagecopyresampled($img, $img, 0, 0, 0, 0, $width, $height, $width, $height);
