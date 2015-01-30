@@ -61,8 +61,8 @@ class Curl
 
     public function __destruct()
     {
-        is_resource($this->curlHandle) ? curl_close($this->curlHandle) : '';
-        is_resource($this->fileHandle) ? fclose($this->fileHandle) : '';
+        is_resource($this->curlHandle) && curl_close($this->curlHandle);
+        is_resource($this->fileHandle) && fclose($this->fileHandle);
         unset($this->curlHandle, $this->fileHandle);
     }
 
@@ -202,7 +202,7 @@ class Curl
 			$result[$k]->error = curl_error($handle);
             
             curl_multi_remove_handle($multiCurlHandles, $handle);
-            $isDownLoad && is_resource($fileHandles[$k]) ? fclose($fileHandles[$k]) : '';
+            $isDownLoad && is_resource($fileHandles[$k]) && fclose($fileHandles[$k]);
         }
         curl_multi_close($multiCurlHandles);
         unset($multiCurlHandles, $curlHandles, $fileHandles);
